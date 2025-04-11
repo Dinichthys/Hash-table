@@ -13,11 +13,13 @@ enum HashTableError
     kCantPushElemListHashTable = 2,
 };
 
-typedef struct bucket
+typedef struct hash_elem
 {
-    list_t strings;
-    list_t counters;
-} bucket_t;
+    const char* string;
+    size_t counter;
+} hash_elem_t;
+
+typedef list_t bucket_t;
 
 static const size_t kNumBucket = 5;
 

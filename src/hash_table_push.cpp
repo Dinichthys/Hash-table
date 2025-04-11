@@ -17,32 +17,26 @@ enum HashTableError HashTablePushElem (hash_table_t hash_table, const char* cons
     const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
 
     const signed long long val_index =
-    ListFindElem (&hash_table [bucket_index].strings, element);
+    ListFindElem (&hash_table [bucket_index], element);
 
     if (val_index != kPoisonVal)
     {
-        size_t counter = 0;
+        hash_elem_t found_elem = {};
 
-        ListElemValLoad (&hash_table [bucket_index].counters, val_index, &counter);
+        ListElemValLoad (&hash_table [bucket_index], val_index, &found_elem);
 
-        counter++;
+        found_elem.counter++;
 
-        ListElemValStor (&hash_table [bucket_index].counters, val_index, &counter);
+        ListElemValStor (&hash_table [bucket_index], val_index, &found_elem);
 
         return kDoneHashTable;
     }
 
     enum ListError error = kDoneList;
 
-    error = ListPushFront (&hash_table [bucket_index].strings, &element);
-    if (error != kDoneList)
-    {
-        return kCantPushElemListHashTable;
-    }
+    hash_elem_t new_elem = {.string = element, .counter = 1};
 
-    size_t counter = 1;
-
-    error = ListPushFront (&hash_table [bucket_index].counters, &counter);
+    error = ListPushFront (&hash_table [bucket_index], &new_elem);
     if (error != kDoneList)
     {
         return kCantPushElemListHashTable;

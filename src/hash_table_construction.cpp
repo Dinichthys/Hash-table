@@ -15,24 +15,12 @@ enum HashTableError HashTableCtor (hash_table_t* hash_table)
     enum ListError error = kDoneList;
     for (size_t bucket_index = 0; bucket_index < kNumBucket; bucket_index++)
     {
-        error = ListCtor (&((*hash_table) [bucket_index].strings),  kStartNumListElem, sizeof (char*));
+        error = ListCtor (&((*hash_table) [bucket_index]),  kStartNumListElem, sizeof (hash_elem_t));
         if (error != kDoneList)
         {
             for (; bucket_index > 0; bucket_index--)
             {
-                ListDtor (&(*hash_table) [bucket_index - 1].strings );
-                ListDtor (&(*hash_table) [bucket_index - 1].counters);
-            }
-            return kCantCreateList;
-        }
-        error = ListCtor (&(*hash_table) [bucket_index].counters, kStartNumListElem, sizeof (size_t));
-        if (error != kDoneList)
-        {
-            ListDtor (&(*hash_table) [bucket_index].strings);
-            for (; bucket_index > 0; bucket_index--)
-            {
-                ListDtor (&(*hash_table) [bucket_index - 1].strings );
-                ListDtor (&(*hash_table) [bucket_index - 1].counters);
+                ListDtor (&(*hash_table) [bucket_index - 1]);
             }
             return kCantCreateList;
         }
@@ -47,8 +35,7 @@ enum HashTableError HashTableDtor (hash_table_t* hash_table)
 
     for (size_t bucket_index = 0; bucket_index < kNumBucket; bucket_index++)
     {
-        ListDtor (&(*hash_table) [bucket_index].strings );
-        ListDtor (&(*hash_table) [bucket_index].counters);
+        ListDtor (&(*hash_table) [bucket_index]);
     }
 
     return kDoneHashTable;
