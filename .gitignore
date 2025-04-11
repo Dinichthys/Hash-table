@@ -3,3 +3,5 @@ build/
 .vscode/
 
 libs/List/main_list.cpp
+
+callgrind.*
