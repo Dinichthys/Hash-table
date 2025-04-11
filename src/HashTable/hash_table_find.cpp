@@ -7,8 +7,8 @@
 
 #include "List/include/list.h"
 
-#include "My_lib/Assert/my_assert.h"
-#include "My_lib/Logger/logging.h"
+#include "MyLib/Assert/my_assert.h"
+#include "MyLib/Logger/logging.h"
 
 signed long long HashTableFindElem (hash_table_t hash_table, const char* const element)
 {
@@ -37,6 +37,8 @@ signed long long ListFindElem (const list_t* const list, const char* const eleme
     ASSERT (list    != NULL, "Invalid pointer for list for ListFindElem\n");
     ASSERT (element != NULL, "Invalid pointer for element ListFindElem\n");
 
+    LOG (kDebug, "Looking for \"%s\"\n", element);
+
     size_t list_elem_index = TailIndex (list);
     hash_elem_t cur_elem = {};
 
@@ -45,9 +47,13 @@ signed long long ListFindElem (const list_t* const list, const char* const eleme
         ListElemValLoad (list, list_elem_index, &cur_elem);
         if (strcmp (cur_elem.string, element) == 0)
         {
+            LOG (kDebug, "Found \"%s\"\n", element);
             return (signed long long) list_elem_index;
         }
+        list_elem_index = NextIndex (list, list_elem_index);
     }
+
+    LOG (kDebug, "Didn't found \"%s\"\n", element);
 
     return kPoisonVal;
 }

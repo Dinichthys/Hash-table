@@ -3,12 +3,14 @@ project (hash-table CXX)
 
 add_executable (${PROJECT_NAME}
     main.cpp
-    src/hash.cpp
-    src/hash_table_construction.cpp
-    src/hash_table_find.cpp
-    src/hash_table_push.cpp
-    libs/My_lib/Logger/logging.cpp
-    libs/My_lib/Assert/print_error.cpp
+    src/HashTable/hash.cpp
+    src/HashTable/hash_table_construction.cpp
+    src/HashTable/hash_table_find.cpp
+    src/HashTable/hash_table_push.cpp
+    src/DataBase/read_data_base.cpp
+    libs/MyLib/Logger/logging.cpp
+    libs/MyLib/Assert/print_error.cpp
+    libs/MyLib/My_stdio/my_stdio.cpp
     libs/List/source/list_construction.cpp
     libs/List/source/list_error_handler.cpp
     libs/List/source/list_src.cpp
@@ -19,8 +21,9 @@ add_executable (${PROJECT_NAME}
 target_include_directories (${PROJECT_NAME}
     PRIVATE
         libs
-        libs/My_lib/Logger
-        libs/My_lib/Assert
+        libs/MyLib/My_stdio
+        libs/MyLib/Logger
+        libs/MyLib/Assert
         libs/List/include
         lins/HashTable
 )

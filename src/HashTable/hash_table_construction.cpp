@@ -5,8 +5,8 @@
 
 #include "List/include/list.h"
 
-#include "My_lib/Assert/my_assert.h"
-#include "My_lib/Logger/logging.h"
+#include "MyLib/Assert/my_assert.h"
+#include "MyLib/Logger/logging.h"
 
 enum HashTableError HashTableCtor (hash_table_t* hash_table)
 {

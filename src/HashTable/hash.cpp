@@ -2,8 +2,8 @@
 
 #include <stdlib.h>
 
-#include "My_lib/Assert/my_assert.h"
-#include "My_lib/Logger/logging.h"
+#include "MyLib/Assert/my_assert.h"
+#include "MyLib/Logger/logging.h"
 
 size_t Hashing (const char* const val, const size_t num)
 {

@@ -6,8 +6,8 @@
 
 #include "List/include/list.h"
 
-#include "My_lib/Assert/my_assert.h"
-#include "My_lib/Logger/logging.h"
+#include "MyLib/Assert/my_assert.h"
+#include "MyLib/Logger/logging.h"
 
 enum HashTableError HashTablePushElem (hash_table_t hash_table, const char* const element)
 {
@@ -34,7 +34,8 @@ enum HashTableError HashTablePushElem (hash_table_t hash_table, const char* cons
 
     enum ListError error = kDoneList;
 
-    hash_elem_t new_elem = {.string = element, .counter = 1};
+    hash_elem_t new_elem = {.string = "", .counter = 1};
+    strcpy (new_elem.string, element);
 
     error = ListPushFront (&hash_table [bucket_index], &new_elem);
     if (error != kDoneList)

@@ -5,6 +5,9 @@
 
 #include "List/include/list.h"
 
+static const size_t kNumBucket = 5'000;
+static const size_t kMaxWordLen = 256;
+
 enum HashTableError
 {
     kDoneHashTable = 0,
@@ -15,13 +18,11 @@ enum HashTableError
 
 typedef struct hash_elem
 {
-    const char* string;
+    char string [kMaxWordLen];
     size_t counter;
 } hash_elem_t;
 
 typedef list_t bucket_t;
-
-static const size_t kNumBucket = 5;
 
 typedef bucket_t hash_table_t [kNumBucket];
 
