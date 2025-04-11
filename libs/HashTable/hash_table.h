@@ -19,7 +19,7 @@ typedef struct bucket
     list_t counters;
 } bucket_t;
 
-static const size_t kNumBucket = 100;
+static const size_t kNumBucket = 5;
 
 typedef bucket_t hash_table_t [kNumBucket];
 

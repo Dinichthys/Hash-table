@@ -17,7 +17,7 @@ enum HashTableError HashTablePushElem (hash_table_t hash_table, const char* cons
     const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
 
     const signed long long val_index =
-    ListFindElem (hash_table [bucket_index].strings, element);
+    ListFindElem (&hash_table [bucket_index].strings, element);
 
     if (val_index != kPoisonVal)
     {

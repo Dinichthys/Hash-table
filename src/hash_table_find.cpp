@@ -18,7 +18,7 @@ signed long long HashTableFindElem (hash_table_t hash_table, const char* const e
     const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
 
     const signed long long val_index =
-    ListFindElem (hash_table [bucket_index].strings, element);
+    ListFindElem (&hash_table [bucket_index].strings, element);
 
     if (val_index == kPoisonVal)
     {
@@ -32,17 +32,17 @@ signed long long HashTableFindElem (hash_table_t hash_table, const char* const e
     return (signed long long) counter;
 }
 
-signed long long ListFindElem (const list_t list, const char* const element)
+signed long long ListFindElem (const list_t* const list, const char* const element)
 {
     ASSERT (list    != NULL, "Invalid pointer for list for ListFindElem\n");
     ASSERT (element != NULL, "Invalid pointer for element ListFindElem\n");
 
-    size_t list_elem_index = TailIndex (&list);
+    size_t list_elem_index = TailIndex (list);
     char* list_string = NULL;
 
     while (list_elem_index != 0)
     {
-        ListElemValLoad (&list, list_elem_index, &list_string);
+        ListElemValLoad (list, list_elem_index, &list_string);
         if (strcmp (list_string, element) == 0)
         {
             return (signed long long) list_elem_index;

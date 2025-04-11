@@ -3,9 +3,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "My_lib/Logger/logging.h"
+
 int main()
 {
-    hash_table_t hash_table;
+    set_log_lvl (kDebug);
+    hash_table_t hash_table = {};
     HashTableCtor (&hash_table);
 
     HashTablePushElem (hash_table, "slovo");

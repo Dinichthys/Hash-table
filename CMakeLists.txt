@@ -71,6 +71,7 @@ target_link_options (${PROJECT_NAME}
         $<$<CONFIG:Release>:
             -O2
             -flto
+            -DNDEBUG
         >
 )
 
