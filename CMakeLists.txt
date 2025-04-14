@@ -5,6 +5,7 @@ add_executable (${PROJECT_NAME}
     main.cpp
     src/HashTable/hash.cpp
     src/HashTable/hash_table_construction.cpp
+    src/HashTable/hash_table_verify.cpp
     src/HashTable/hash_table_find.cpp
     src/HashTable/hash_table_push.cpp
     src/DataBase/read_data_base.cpp

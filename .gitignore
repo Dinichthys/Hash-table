@@ -4,4 +4,6 @@ build/
 
 libs/List/main_list.cpp
 
+Dump_Files/
+
 callgrind.*

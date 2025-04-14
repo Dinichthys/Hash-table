@@ -5,15 +5,23 @@
 
 #include "List/include/list.h"
 
-static const size_t kNumBucket = 5'000;
+static const size_t kNumBucket = 3;
 static const size_t kMaxWordLen = 256;
 
 enum HashTableError
 {
     kDoneHashTable = 0,
 
-    kCantCreateList = 1,
-    kCantPushElemListHashTable = 2,
+    kCantCreateList                      = 1,
+    kCantPushElemListHashTable           = 2,
+
+    kCantDumpHashTable                   = 3,
+
+    kVerifyHashTableListNullPtr          = 7,
+    kVerifyHashTableListInvalidZeroElem  = 8,
+    kVerifyHashTableListInvalidSize      = 9,
+    kVerifyHashTableListInvalidOrderList = 10,
+    kVerifyHashTableListInvalidOrderFree = 11,
 };
 
 typedef struct hash_elem
@@ -29,6 +37,7 @@ typedef bucket_t hash_table_t [kNumBucket];
 #include "HashTable/hash_table_construction.h"
 #include "HashTable/hash_table_find.h"
 #include "HashTable/hash_table_push.h"
+#include "HashTable/hash_table_verify.h"
 #include "HashTable/hash.h"
 
 #endif // HASH_TABLE_H
