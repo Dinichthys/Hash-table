@@ -25,11 +25,7 @@ signed long long HashTableFindElem (hash_table_t hash_table, const char* const e
         return kPoisonVal;
     }
 
-    hash_elem_t hash_elem = {};
-
-    ListElemValLoad (&hash_table [bucket_index], val_index, &hash_elem);
-
-    return (signed long long) hash_elem.counter;
+    return (signed long long) ((hash_elem_t*)(hash_table [bucket_index].data))[val_index].counter;
 }
 
 signed long long ListFindElem (const list_t* const list, const char* const element)
@@ -40,12 +36,10 @@ signed long long ListFindElem (const list_t* const list, const char* const eleme
     LOG (kDebug, "Looking for \"%s\"\n", element);
 
     size_t list_elem_index = TailIndex (list);
-    hash_elem_t cur_elem = {};
 
     while (list_elem_index != 0)
     {
-        ListElemValLoad (list, list_elem_index, &cur_elem);
-        if (strcmp (cur_elem.string, element) == 0)
+        if (strcmp (((hash_elem_t*)(list->data))[list_elem_index].string, element) == 0)
         {
             LOG (kDebug, "Found \"%s\"\n", element);
             return (signed long long) list_elem_index;

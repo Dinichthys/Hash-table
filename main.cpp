@@ -62,6 +62,20 @@ int main()
 //                      HashTableFindElem (hash_table, "slovo"),
 //                      HashTableFindElem (hash_table, "seno"),
 //                      HashTableFindElem (hash_table, "den"));
+//
+//     FILE* bucket_size = fopen ("Bucket_size.txt", "w");
+//
+//     size_t num_words = 0;
+//
+//     for (size_t bucket_index = 0; bucket_index < kNumBucket; bucket_index++)
+//     {
+//         fprintf (bucket_size, "bucket_index = %lu bucket size = %lu\n", bucket_index, hash_table [bucket_index].counter);
+//         num_words += hash_table [bucket_index].counter;
+//     }
+//
+//     fclose (bucket_size);
+//
+//     fprintf (stdout, "%lu\n", num_words);
 
     HashTableDtor (&hash_table);
 

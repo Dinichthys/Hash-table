@@ -21,13 +21,7 @@ enum HashTableError HashTablePushElem (hash_table_t hash_table, const char* cons
 
     if (val_index != kPoisonVal)
     {
-        hash_elem_t found_elem = {};
-
-        ListElemValLoad (&hash_table [bucket_index], val_index, &found_elem);
-
-        found_elem.counter++;
-
-        ListElemValStor (&hash_table [bucket_index], val_index, &found_elem);
+        ((hash_elem_t*)(hash_table [bucket_index].data))[val_index].counter++;
 
         return kDoneHashTable;
     }
