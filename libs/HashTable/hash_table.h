@@ -5,7 +5,7 @@
 
 #include "List/include/list.h"
 
-static const size_t kNumBucket = 3;
+static const size_t kNumBucket = 100'000;
 static const size_t kMaxWordLen = 256;
 
 enum HashTableError
