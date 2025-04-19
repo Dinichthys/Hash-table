@@ -2,11 +2,13 @@
 #define HASH_TABLE_H
 
 #include <stdlib.h>
+#include <stdint.h>
+#include <immintrin.h>
 
 #include "List/include/list.h"
 
 static const size_t kNumBucket = 2'000;
-static const size_t kMaxWordLen = 256;
+static const size_t kMaxWordLen = 32;
 
 enum HashTableError
 {
@@ -26,7 +28,7 @@ enum HashTableError
 
 typedef struct hash_elem
 {
-    char string [kMaxWordLen];
+    alignas (__m256) char string [kMaxWordLen];
     size_t counter;
 } hash_elem_t;
 

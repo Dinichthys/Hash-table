@@ -35,16 +35,18 @@ signed long long ListFindElem (const list_t* const list, const char* const eleme
 
     LOG (kDebug, "Looking for \"%s\"\n", element);
 
-    size_t list_elem_index = TailIndex (list);
+    size_t list_elem_index = list->order[0].next;
+
+    hash_elem_t* hash_elem_arr = (hash_elem_t*)(list->data);
 
     while (list_elem_index != 0)
     {
-        if (strcmp (((hash_elem_t*)(list->data))[list_elem_index].string, element) == 0)
+        if (strcmp (hash_elem_arr[list_elem_index].string, element) == 0)
         {
             LOG (kDebug, "Found \"%s\"\n", element);
             return (signed long long) list_elem_index;
         }
-        list_elem_index = NextIndex (list, list_elem_index);
+        list_elem_index = list->order[list_elem_index].next;
     }
 
     LOG (kDebug, "Didn't found \"%s\"\n", element);

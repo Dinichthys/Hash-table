@@ -32,20 +32,28 @@ int main()
         return EXIT_FAILURE;
     }
     fclose (data_base);
-    const size_t kNumIteration = 1'000'000;
+    const size_t kNumIteration = 100'000'000;
+
+    signed long long the_num = 0;
+    signed long long Philosophy_num = 0;
+    signed long long dragon_num = 0;
+    signed long long cock_num = 0;
+
     for (size_t iteration = 0; iteration < kNumIteration; iteration++)
     {
-        fprintf (stdout, "Iteration number = %lu\n"
-                         "the:         %lld \n"
-                         "Philosophy:  %lld \n"
-                         "dragon:      %lld \n"
-                         "cock:        %lld \n",
-                         iteration,
-                         HashTableFindElem (hash_table, "the"),
-                         HashTableFindElem (hash_table, "Philosophy"),
-                         HashTableFindElem (hash_table, "dragon"),
-                         HashTableFindElem (hash_table, "cock"));
+        the_num        += HashTableFindElem (hash_table, "the")        + kNumIteration + Philosophy_num;
+        Philosophy_num += HashTableFindElem (hash_table, "Philosophy") + kNumIteration + the_num;
+        dragon_num     += HashTableFindElem (hash_table, "dragon")     + kNumIteration + cock_num;
+        cock_num       += HashTableFindElem (hash_table, "cock")       + kNumIteration + dragon_num;
     }
+
+    fprintf (stdout, "Iteration number = %lu\n"
+                        "the:         %lld \n"
+                        "Philosophy:  %lld \n"
+                        "dragon:      %lld \n"
+                        "cock:        %lld \n",
+                        kNumIteration,
+                        the_num, Philosophy_num, dragon_num, cock_num);
 
 //     HashTablePushElem (hash_table, "slovo");
 //     HashTablePushElem (hash_table, "slovo");

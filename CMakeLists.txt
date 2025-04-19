@@ -45,6 +45,9 @@ target_compile_options (${PROJECT_NAME}
         -fstrict-overflow
 
         -march=native
+
+        -g
+
         $<$<CONFIG:Debug>:
             -Og
             -g3
@@ -54,8 +57,8 @@ target_compile_options (${PROJECT_NAME}
         >
 
         $<$<CONFIG:Release>:
-            -O0
-            -flto
+            -O2
+            # -flto
             -DNDEBUG
         >
 )
@@ -63,7 +66,10 @@ target_compile_options (${PROJECT_NAME}
 target_link_options (${PROJECT_NAME}
     PRIVATE
         -march=native
+
         -Wl,-q
+        -g
+
         $<$<CONFIG:Debug>:
             -Og
             -g3
@@ -73,8 +79,8 @@ target_link_options (${PROJECT_NAME}
         >
 
         $<$<CONFIG:Release>:
-            -O0
-            -flto
+            -O2
+            # -flto
             -DNDEBUG
         >
 )
