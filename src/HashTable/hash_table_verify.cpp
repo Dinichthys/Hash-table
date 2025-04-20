@@ -57,5 +57,5 @@ void PrintData (void* const data, FILE* const stream)
     ASSERT (data   != NULL, "Invalid argument data for PrintData in HashTableDump\n");
     ASSERT (stream != NULL, "Invalid argument stream for PrintData in HashTableDump\n");
 
-    fprintf (stream, "| string | %s | counter | %lu ", ((hash_elem_t*) data)->string, ((hash_elem_t*) data)->counter);
+    fprintf (stream, "| string | %s | counter | %lu ", (char*) (((hash_elem_t*) data)->string), ((hash_elem_t*) data)->counter);
 }

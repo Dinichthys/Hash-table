@@ -39,12 +39,28 @@ int main()
     signed long long dragon_num = 0;
     signed long long cock_num = 0;
 
+    // for (size_t iteration = 0; iteration < kNumIteration; iteration++)
+    // {
+    //     the_num        += HashTableFindElem (hash_table, "the");
+    //     Philosophy_num += HashTableFindElem (hash_table, "Philosophy");
+    //     dragon_num     += HashTableFindElem (hash_table, "dragon");
+    //     cock_num       += HashTableFindElem (hash_table, "cock");
+    // }
+
+    // for (size_t iteration = 0; iteration < kNumIteration; iteration++)
+    // {
+    //     the_num        += HashTableFindElemSIMD (hash_table, "the");
+    //     Philosophy_num += HashTableFindElemSIMD (hash_table, "Philosophy");
+    //     dragon_num     += HashTableFindElemSIMD (hash_table, "dragon");
+    //     cock_num       += HashTableFindElemSIMD (hash_table, "cock");
+    // }
+
     for (size_t iteration = 0; iteration < kNumIteration; iteration++)
     {
-        the_num        += HashTableFindElem (hash_table, "the")        + kNumIteration + Philosophy_num;
-        Philosophy_num += HashTableFindElem (hash_table, "Philosophy") + kNumIteration + the_num;
-        dragon_num     += HashTableFindElem (hash_table, "dragon")     + kNumIteration + cock_num;
-        cock_num       += HashTableFindElem (hash_table, "cock")       + kNumIteration + dragon_num;
+        the_num        += ASMHashTableFindElemSIMD (hash_table, "the");
+        Philosophy_num += ASMHashTableFindElemSIMD (hash_table, "Philosophy");
+        dragon_num     += ASMHashTableFindElemSIMD (hash_table, "dragon");
+        cock_num       += ASMHashTableFindElemSIMD (hash_table, "cock");
     }
 
     fprintf (stdout, "Iteration number = %lu\n"

@@ -12,4 +12,9 @@ static const signed long long kPoisonVal = -1;
 signed long long HashTableFindElem (hash_table_t hash_table, char const* const element);
 signed long long ListFindElem      (const list_t* const list, const char* const element);
 
+signed long long HashTableFindElemSIMD (hash_table_t hash_table, char const* const element);
+signed long long ListFindElemSIMD      (const list_t* const list, const char* const element);
+
+signed long long ASMHashTableFindElemSIMD (hash_table_t hash_table, char const* const element);
+
 #endif // HASH_TABLE_FIND_H
