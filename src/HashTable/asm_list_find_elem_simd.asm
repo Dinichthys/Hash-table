@@ -55,54 +55,55 @@ ASMListFindElemSIMD:
     sub rsp, rcx                           ; Set RSP on the start of the word
 
     vmovaps ymm0, yword [rsp]              ; YMM0 = The word
-    mov rcx, qword [rdi + kSizePointer]    ; RCX = array of orders in the list
-    mov rdx, qword [rcx]                   ; RDX = Index of the element
+    mov rcx, qword [rdi + 2*kSizePointer]  ; RCX = number of list elements
     mov rdi, qword [rdi]                   ; RDI = array of data
+    mov rdx, 1
+
+    mov r9, rdi
+    add r9, 2 * kWordLen                   ; R9 = Current word
+
+    inc rcx
+    vmovaps ymm2, yword [r9]
 
 .FindElemInList_Comparison:
 
-    test rdx, rdx                          ; RDX = Null element
-    je .WordNotFound
+    cmp rdx, rcx                          ; RDX = Null element
+    jae .WordNotFound
 
-    mov r8, rdx
-    shl r8, 6                              ; R8 = Index * 64 ((sizeof (hash_elem_t)))
+    inc rdx
 
-    mov r9, rdi
-    add r9, r8                             ; R9 = Current word
+    vmovaps ymm1, ymm2
+    add r9, 2 * kWordLen                  ; R9 = Current word
 
-    vmovaps ymm1, yword [r9]
-    vpxor ymm2, ymm1, ymm0                 ; Comparison
-    vpmovmskb eax, ymm2                    ; Move mask
-    cmp eax, kMask                         ; Check that all of 32 bits are set correctly (0xFFFFFFFF)
+    vmovaps ymm2, yword [r9]
+    vpxor ymm3, ymm1, ymm0                ; Comparison
+    vptest ymm3, ymm3                     ; Check that ymm2 == 0
 
-    jne .FindElemInList_Continue
+    jne .FindElemInList_Comparison
 
-.FindElemInList_Body:
+.FindElemInList_Stop:
     mov rsp, rbp
     pop rbp
     mov rax, rdx
+    mov rdi, rdx
     ret
-
-.FindElemInList_Continue:
-    mov r8, rdx
-    shl r8, 4                              ; R8 = Index * 16 (sizeof (order_list_t))
-    mov r9, rcx
-    add r9, r8                             ; R9 = Current element
-    mov rdx, qword [r9]
-    jmp .FindElemInList_Comparison
 
 .WordNotFound:
     mov rsp, rbp
     pop rbp
     mov rax, kPoison
+    mov rdi, rax
     ret
 
 .WriteWordToStack_Error:
     mov rsp, rbp
     pop rbp
     mov rax, kTooLongWordError
+    mov rdi, rax
     ret
 
+; What does this function do:
+;
 ; signed long long ListFindElemSIMD (const list_t* const list, const char* const element)
 ; {
 ;     ASSERT (list    != NULL, "Invalid pointer for list for ListFindElem\n");
