@@ -63,29 +63,30 @@ int main()
     //     cock_num       += ASMHashTableFindElemSIMD (hash_table, "cock");
     // }
 
-    // for (size_t iteration = 0; iteration < kNumIteration; iteration++)
-    // {
-    //     the_num        += InlineASMHashTableFindElemSIMD (hash_table, "the");
-    //     Philosophy_num += InlineASMHashTableFindElemSIMD (hash_table, "Philosophy");
-    //     dragon_num     += InlineASMHashTableFindElemSIMD (hash_table, "dragon");
-    //     cock_num       += InlineASMHashTableFindElemSIMD (hash_table, "cock");
-    // }
-
     for (size_t iteration = 0; iteration < kNumIteration; iteration++)
     {
-        the_num        += HashTableFindElemStrCmp (hash_table, "the");
-        Philosophy_num += HashTableFindElemStrCmp (hash_table, "Philosophy");
-        dragon_num     += HashTableFindElemStrCmp (hash_table, "dragon");
-        cock_num       += HashTableFindElemStrCmp (hash_table, "cock");
+        the_num        += InlineASMHashTableFindElemSIMD (hash_table, "the");
+        Philosophy_num += InlineASMHashTableFindElemSIMD (hash_table, "Philosophy");
+        dragon_num     += InlineASMHashTableFindElemSIMD (hash_table, "dragon");
+        cock_num       += InlineASMHashTableFindElemSIMD (hash_table, "cock");
     }
+
+    // for (size_t iteration = 0; iteration < kNumIteration; iteration++)
+    // {
+    //     the_num        += HashTableFindElemStrCmp (hash_table, "the");
+    //     Philosophy_num += HashTableFindElemStrCmp (hash_table, "Philosophy");
+    //     dragon_num     += HashTableFindElemStrCmp (hash_table, "dragon");
+    //     cock_num       += HashTableFindElemStrCmp (hash_table, "cock");
+    // }
 
     fprintf (stdout, "Iteration number = %lu\n"
                         "the:         %ld \n"
                         "Philosophy:  %ld \n"
                         "dragon:      %ld \n"
-                        "cock:        %ld \n",
+                        "cock:        %ld \n"
+                        "%ld\n",
                         kNumIteration,
-                        the_num, Philosophy_num, dragon_num, cock_num);
+                        the_num, Philosophy_num, dragon_num, cock_num, -100'000'000L);
 
 //     HashTablePushElem (hash_table, "slovo");
 //     HashTablePushElem (hash_table, "slovo");

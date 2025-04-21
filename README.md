@@ -403,20 +403,26 @@ int64_t InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const char* con
     int64_t ret_val = kPoisonVal;
     const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
 
-    ASMListFindElemSIMD (&hash_table [bucket_index], element);
-
     asm(
-        "movq %%rdi, %%rax\n\t"                         // Возвращаем значение после выхода из функции поиска элемента в списке
-        "cmpq %1, %%rax\n\t"                            // Сравнение с kPoisonVal
+        ".BreakPoint:\n\t"
+        "movq %2, %%rdi\n\t"
+        "movq %3, %%rsi\n\t"
+        "call ASMListFindElemSIMD\n\t"
+        "movq %%rdi, %%rax\n\t"
+        "cmpq %1, %%rax\n\t"
         "je .SkipASM\n\t"
 
         "subq $32, %%r9\n\t"
-        "movq (%%r9), %0\n\t"                        // R9 = указатель на counter в hash_elem_t
+        "movq (%%r9), %0\n\t"
+        "jmp .EndASM\n\t"
 
         ".SkipASM:\n\t"
+        "movq %1, %0\n\t"
+
+        ".EndASM:\n\t"
         : "=r" (ret_val)
-        : "r" (kPoisonVal)
-        : "rax", "r9"
+        : "m" (kPoisonVal), "r" (&hash_table [bucket_index]), "r" (element)
+        : "rax", "rdi", "rsi", "rdx", "rcx", "r9", "r8"
     );
 
     return ret_val;

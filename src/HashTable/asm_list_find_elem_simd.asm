@@ -23,8 +23,7 @@ ASMListFindElemSIMD:
 
     mov rax, rsp
     and rax, kMaskAlign
-    add rsp, rax
-    sub rsp, kAlignment
+    sub rsp, rax
 
     push kEndSym
     push kEndSym
