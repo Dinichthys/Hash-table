@@ -154,10 +154,10 @@ int strcmp_256 (const char* const first_str, const char* const second_str)
     <tbody>
         <tr>
             <td align="center">
-            <img src="data/Perf2_highlighted.png" alt="Фото">
+            <img src="data/PerfStrCmp_highlighted.png" alt="Фото">
             </td>
             <td align="center">
-            <img src="data/FlameGraph2.png" alt="Фото">
+            <img src="data/FlameGraphStrCmp.png" alt="Фото">
             </td>
         </tr>
     </tbody>
@@ -188,7 +188,7 @@ int strcmp_256 (const char* const first_str, const char* const second_str)
 
 #### Описание
 
-Полученный профиль показывает, что теперь горячей стала функция поиска элемента в списке. Данная функция написана содержит в себе лишь один цикл с поиском элемента и больше ничего, что означает, что оптимизация данной функции возможна лишь в случае переписывания её на язык **ассемблера**. Такое могло случиться, если компилятор не смог учесть все задержки по времени на работу с памятью и не достаточно хорошо распределил инструкции.
+Полученный профиль показывает, что `strcmp` оптимизировалась, но всё равно осталась горячей. Однако, можно заметить, что она вызывается в основном из выделенной в прямоугольник в профиле функции. Эта функция тоже является горячей, поэтому попробуем оптимизировать её. Данная функция написана содержит в себе лишь один цикл с поиском элемента и больше ничего, что означает, что оптимизация данной функции возможна лишь в случае переписывания её на язык **ассемблера**. Такое могло случиться, если компилятор не смог учесть все задержки по времени на работу с памятью и не достаточно хорошо распределил инструкции.
 
 Перевод данной функции в ассемблер можно посмотреть по ссылке на [GodBolt](https://godbolt.org/#z:OYLghAFBqd5QCxAYwPYBMCmBRdBLAF1QCcAaPECAMzwBtMA7AQwFtMQByARg9KtQYEAysib0QXACx8BBAKoBnTAAUAHpwAMvAFYTStJg1DIApACYAQuYukl9ZATwDKjdAGFUtAK4sGIAMwArKSuADJ4DJgAcj4ARpjEIADspAAOqAqETgwe3r4BwemZjgLhkTEs8YkpdpgO2UIETMQEuT5%2BQbaY9iUMjc0EZdFxCcm2TS1t%2BZ0KE4MRw5WjSQCUtqhexMjsHOb%2BEcjeWADUJv5us%2Bi0eLEAdAhn2CYaAIJ7B0eYp%2BdsLCQAnvdHs83mZ9gxDl4TmcLgRiBFgED/E9Xu8IZ9vm48CwWBE4REkSi3q9ZkxHMhjmgGLNjpkAF6YAD6BGOAGsALJMVQAdRI6FCjG%2BABFjv4zGcrCSmuTaXhgJF0MdaAJgEqVWzlKg8AoBAA1MTC44AWi4EpBIII/1SmCwVFpcK8DmOCCYCgQjO6mBY5qSkpexwDxzEcuYCmOEEZjJYZkCADYVpSXcR7fCjKdAhYOVzecR%2BYwTIEhWbXoHZQzmZSNoIEsW3kkRS63R76CxmbWLVabZg7bNiI6WXyEozrrMfX7S/SmSzIqoCO2S4HJxXUsRMAA3JxeBTt%2BvHQfEYfaght/x%2BjvW20p/tKo9jkGltda9AAKmO6DJTHn/sD%2B8Ps2Zr77l%2BE54OWLJoF41bEMBi6gVOZaYDBAZLiyVCrohp7mguyFwRWnqtpOO4iiOx5zphqIUS8mTyjaappsqabhLMABiEToNgLZCAAkuyIoQFSNIkQBlbUiyJGkCJNLIEmr4CSy%2BGMAQKx3thibNMcCmCIyvbppmnI8nyAoMAWIpnKZZjihZtYTnCyCpP84aacevYSU5ynkcS34BpG0ZxngGktopjLcbxhpRr5sbDqgTDoNpeAxrG4b8QINI%2BQleDPgmTnaXC7lnqpKE3v%2B%2BGMmxmCqIaJFGo8QEZhoJm3DOZH5V5zquu6JUEK%2BjYdS2jLNMmZnhj1zZegBKwQFVjzvk0eVYa1aV%2BZSLCpKNLBhTiCXaZgBAMsQqBxQl4ZzapADuCB0F8k1HmtpUMFgFVgGAQ0aMpqkmL696loGyArWtG0RVFMWHXGSVycci2xhlCYjSVA0FhYQklWVqgNb2CIna1pZ4HaEabXGUaoGuXquqyHqpHgAAc4bhVtv3WgAjuTeBio5gVaSFQoSfTa0rAmZkvaozHMWAHDC6L4ti8xb1Y4GH3jt9iurgQmwMOG1EKnRqoMcACZI31KPWYrpz1l9iv62NKOVUe1XIrViM3cj93lQ1TVGwGH1FpRpbK6rGpajqDD6rQRHzRway0JwgS8H4HBaKQqCcG41jWLSGxbF8ew8KQBCaOHaysiAkixrcACckhJIEgQaJXST%2BJIXCxsEkccJIMd5wnnC8AoIAaDnedrHAsBIGgK2XWQFDJWP9CJMAUhmHwdAEAkPcQLEHexBEzT/Jw2eb8wxD/AA8rE2h1Ln3C8KPbCCEfDC0Dvce8FgsReMAbhiLQPeX6QWAsIYwBxBP1/ngVc9Ribf3juVOoXhl6714HiboHdrixGINvDwWAO74hYPA0gxNiCxAyJgIUJMjDXCMAPPgBhgAKF1HgTAp0j7WljtnfgggRBiHYFIGQghFAqHUMA3QXB9AAJQCnSw%2Bgbg90gGsVAqRejfyNEfMwxp/5rlUGYXgRMEjwiwNIiAaxaj1GcBAVwUw/DCLCAsCoVQ9BFCyAIcxdiMgOIYEMGxoxhFGN6P0SYnh2h6G8Q0OY7iRiJC8XMJxESBihKWOEwx6dth6FOoYAgTCCBcQYPweBEco7t2AYnDgxxVCU1jEaWMkhjjAGQBSKQtwVEQFwIQEgpwwRcBWLwC%2BWg%2BakELoEfwtwNCBDMJISQpcRlmCbpTIIzdOBt1ILHeOhTu6937k/HpLdNELI7sstZ3S1j4MyM4SQQA).
 
