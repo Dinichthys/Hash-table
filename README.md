@@ -128,11 +128,6 @@ sudo hotspot
 ``` C
 signed long long ListFindElem (const list_t* const list, const char* const element)
 {
-    ASSERT (list    != NULL, "Invalid pointer for list for ListFindElem\n");
-    ASSERT (element != NULL, "Invalid pointer for element ListFindElem\n");
-
-    LOG (kDebug, "Looking for \"%s\"\n", element);
-
     size_t list_elem_index = list->order[0].next;
 
     hash_elem_t* hash_elem_arr = (hash_elem_t*)(list->data);
@@ -141,13 +136,10 @@ signed long long ListFindElem (const list_t* const list, const char* const eleme
     {
         if (strcmp (hash_elem_arr[list_elem_index].string, element) == 0)
         {
-            LOG (kDebug, "Found \"%s\"\n", element);
             return (signed long long) list_elem_index;
         }
         list_elem_index = list->order[list_elem_index].next;
     }
-
-    LOG (kDebug, "Didn't found \"%s\"\n", element);
 
     return kPoisonVal;
 }
@@ -160,11 +152,6 @@ signed long long ListFindElem (const list_t* const list, const char* const eleme
 ``` C
 signed long long ListFindElemSIMD (const list_t* const list, const char* const element)
 {
-    ASSERT (list    != NULL, "Invalid pointer for list for ListFindElem\n");
-    ASSERT (element != NULL, "Invalid pointer for element ListFindElem\n");
-
-    LOG (kDebug, "Looking for \"%s\"\n", element);
-
     char element_str [kMaxWordLen] = "";
     strcpy (element_str, element);
 
@@ -180,13 +167,10 @@ signed long long ListFindElemSIMD (const list_t* const list, const char* const e
         cmp_elem = _mm256_load_si256 ((const __m256i*) hash_elem_arr[list_elem_index].string);
         if (_mm256_movemask_epi8 (_mm256_cmpeq_epi32 (element_SIMD, cmp_elem)) == 0xFF'FF'FF'FF)
         {
-            LOG (kDebug, "Found \"%s\"\n", element);
             return (signed long long) list_elem_index;
         }
         list_elem_index = list->order[list_elem_index].next;
     }
-
-    LOG (kDebug, "Didn't found \"%s\"\n", element);
 
     return kPoisonVal;
 }
@@ -242,6 +226,15 @@ signed long long ListFindElemSIMD (const list_t* const list, const char* const e
 
 Полученный профиль показывает, что теперь горячей стала функция поиска элемента в списке. Данная функция написана содержит в себе лишь один цикл с поиском элемента и больше ничего, что означает, что оптимизация данной функции возможна лишь в случае переписывания её на язык **ассемблера**. Такое могло случиться, если компилятор не смог учесть все задержки по времени на работу с памятью и не достаточно хорошо распределил инструкции.
 
+Перевод данной функции в ассемблер можно посмотреть по ссылке на [GodBolt](https://godbolt.org/#z:OYLghAFBqd5QCxAYwPYBMCmBRdBLAF1QCcAaPECAMzwBtMA7AQwFtMQByARg9KtQYEAysib0QXACx8BBAKoBnTAAUAHpwAMvAFYTStJg1DIApACYAQuYukl9ZATwDKjdAGFUtAK4sGIAMwArKSuADJ4DJgAcj4ARpjEIADspAAOqAqETgwe3r4BwemZjgLhkTEs8YkpdpgO2UIETMQEuT5%2BQbaY9iUMjc0EZdFxCcm2TS1t%2BZ0KE4MRw5WjSQCUtqhexMjsHOb%2BEcjeWADUJv5us%2Bi0eLEAdAhn2CYaAIJ7B0eYp%2BdsLCQAnvdHs83mZ9gxDl4TmcLgRiBFgED/E9Xu8IZ9vm48CwWBE4REkSi3q9ZkxHMhjmgGLNjpkAF6YAD6BGOAGsALJMVQAdRI6FCjG%2BABFjv4zGcrCSmuTaXhgJF0MdaAJgEqVWzlKg8AoBAA1MTC44AWi4EpBIII/1SmCwVFpcK8DmOCCYCgQjO6mBY5qSkpexwDxzEcuYCmOEEZjJYZkCADYVpSXcR7fCjKdAhYOVzecR%2BYwTIEhWbXoHZQzmZSNoIEsW3kkRS63R76CxmbWLVabZg7bNiI6WXyEozrrMfX7S/SmSzIqoCO2S4HJxXUsRMAA3JxeBTt%2BvHQfEYfaght/x%2BjvW20p/tKo9jkGltda9AAKmO6DJTHn/sD%2B8Ps2Zr77l%2BE54OWLJoF41bEMBi6gVOZaYDBAZLiyVCrohp7mguyFwRWnqtpOO4iiOx5zphqIUS8mTyjaappsqabhLMABiEToNgLZCAAkuyIoQFSNIkQBlbUiyJGkCJNLIEmr4CSy%2BGMAQKx3thibNMcCmCIyvbppmnI8nyAoMAWIpnKZZjihZtYTnCyCpP84aacevYSU5ynkcS34BpG0ZxngGktopjLcbxhpRr5sbDqgTDoNpeAxrG4b8QINI%2BQleDPgmTnaXC7lnqpKE3v%2B%2BGMmxmCqIaJFGo8QEZhoJm3DOZH5V5zquu6JUEK%2BjYdS2jLNMmZnhj1zZegBKwQFVjzvk0eVYa1aV%2BZSLCpKNLBhTiCXaZgBAMsQqBxQl4ZzapADuCB0F8k1HmtpUMFgFVgGAQ0aMpqkmL696loGyArWtG0RVFMWHXGSVycci2xhlCYjSVA0FhYQklWVqgNb2CIna1pZ4HaEabXGUaoGuXquqyHqpHgAAc4bhVtv3WgAjuTeBio5gVaSFQoSfTa0rAmZkvaozHMWAHDC6L4ti8xb1Y4GH3jt9iurgQmwMOG1EKnRqoMcACZI31KPWYrpz1l9iv62NKOVUe1XIrViM3cj93lQ1TVGwGH1FpRpbK6rGpajqDD6rQRHzRway0JwgS8H4HBaKQqCcG41jWLSGxbF8ew8KQBCaOHaysiAkixrcACckhJIEgQaJXST%2BJIXCxsEkccJIMd5wnnC8AoIAaDnedrHAsBIGgK2XWQFDJWP9CJMAUhmHwdAEAkPcQLEHexBEzT/Jw2eb8wxD/AA8rE2h1Ln3C8KPbCCEfDC0Dvce8FgsReMAbhiLQPeX6QWAsIYwBxBP1/ngVc9Ribf3juVOoXhl6714HiboHdrixGINvDwWAO74hYPA0gxNiCxAyJgIUJMjDXCMAPPgBhgAKF1HgTAp0j7WljtnfgggRBiHYFIGQghFAqHUMA3QXB9AAJQCnSw%2Bgbg90gGsVAqRejfyNEfMwxp/5rlUGYXgRMEjwiwNIiAaxaj1GcBAVwUw/DCLCAsCoVQ9BFCyAIcxdiMgOIYEMGxoxhFGN6P0SYnh2h6G8Q0OY7iRiJC8XMJxESBihKWOEwx6dth6FOoYAgTCCBcQYPweBEco7t2AYnDgxxVCU1jEaWMkhjjAGQBSKQtwVEQFwIQEgpwwRcBWLwC%2BWg%2BakELoEfwtwNCBDMJISQpcRlmCbpTIIzdOBt1ILHeOhTu6937k/HpLdNELI7sstZ3S1j4MyM4SQQA).
+
+<details>
+<summary> В случае, если ссылка не работает, можно посмотреть на скриншот с GodBolt </summary>
+<img src="data/GodBoltFunc.png" alt="Фото">
+</details>
+
+Можно заметить, что загрузка слова из памяти в широкий регистр происходит непосредственно в теле цикла перед сравнением, что замедляет программу, так как происходит зависимость по данным.
+
 При переводе на язык ассемблера данной функции нужно было учесть, что загрузка из памяти **256** бит информации - долгий процесс, поэтому простой перевод данной функции нам бы не сильно помог. Для лучшего результата сделаем так:
 
 1. Заранее поставим на загрузку слово в регистр **ymm2** (ещё до цикла)
@@ -284,39 +277,48 @@ ASMListFindElemSIMD:
     inc rsi
     dec rcx
     jmp .WriteWordToStack_Comparison
-.WriteWordToStack_Stop:                    ; The word was written to the stack
+.WriteWordToStack_Stop:                    ; Слово было записано в стек
 
     mov rsi, rcx
     mov rcx, kWordLen
     sub rcx, rsi
-    sub rsp, rcx                           ; Set RSP on the start of the word
+    sub rsp, rcx                           ; Установил RSP на начало слова
 
-    vmovaps ymm0, yword [rsp]              ; YMM0 = The word
-    mov rcx, qword [rdi + 2*kSizePointer]  ; RCX = number of list elements
-    mov rdi, qword [rdi]                   ; RDI = array of data
-    mov rdx, 1
+    vmovaps ymm0, yword [rsp]              ; YMM0 = искомое слово
+    mov rcx, qword [rdi + 2*kSizePointer]  ; RCX = количество элементов в списке
+    mov rdi, qword [rdi]                   ; RDI = указатель на массив с данными
+    mov rdx, 1                             ; RDX = индекс взятого элемента
 
     mov r9, rdi
-    add r9, 2 * kWordLen                   ; R9 = Current word
+    add r9, 2 * kWordLen                   ; R9 = указатель на выбранное из списка слово
+
+;-----------НАЧАЛО---ОПТИМИЗИРОВАННОГО---БЛОКА---------
 
     inc rcx
     vmovaps ymm2, yword [r9]
 
+;------------------------ЦИКЛ---------------------------
+
 .FindElemInList_Comparison:
 
-    cmp rdx, rcx                          ; RDX = Null element
+    cmp rdx, rcx                          ; Счётчик RDX перебрал все элементы
     jae .WordNotFound
+
+    vmovaps ymm1, ymm2
+    add r9, 2 * kWordLen                  ; R9 = указатель на следующее слово в списке
+
+    vmovaps ymm2, yword [r9]              ; Заранее поставили на загрузку следующего слова в YMM2
+    vpxor ymm3, ymm1, ymm0                ; Сравнение
 
     inc rdx
 
-    vmovaps ymm1, ymm2
-    add r9, 2 * kWordLen                  ; R9 = Current word
-
-    vmovaps ymm2, yword [r9]
-    vpxor ymm3, ymm1, ymm0                ; Comparison
-    vptest ymm3, ymm3                     ; Check that ymm2 == 0
+    vptest ymm3, ymm3                     ; Проверка, что YMM3 == 0
 
     jne .FindElemInList_Comparison
+
+;-------------------------------------------------------
+
+;---------------ВОЗВРАЩАЕМЫЕ---ЗНАЧЕНИЯ-----------------
 
 .FindElemInList_Stop:
     mov rsp, rbp
@@ -404,9 +406,6 @@ ASMListFindElemSIMD:
 ``` C
 signed long long ASMHashTableFindElemSIMD (hash_table_t hash_table, const char* const element)
 {
-    ASSERT (hash_table != NULL, "Invalid pointer for hash table for HashTableFindElem\n");
-    ASSERT (element    != NULL, "Invalid pointer for element HashTableFindElem\n");
-
     const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
 
     const signed long long val_index =
@@ -437,9 +436,6 @@ signed long long ASMHashTableFindElemSIMD (hash_table_t hash_table, const char* 
 ``` C
 signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const char* const element)
 {
-    ASSERT (hash_table != NULL, "Invalid pointer for hash table for HashTableFindElem\n");
-    ASSERT (element    != NULL, "Invalid pointer for element HashTableFindElem\n");
-
     signed long long ret_val = kPoisonVal;
     const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
 
