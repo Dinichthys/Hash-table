@@ -396,7 +396,74 @@ ASMListFindElemSIMD:
 
 #### Описание
 
+Полученный после предыдущей оптимизации профиль показывает, что функция не перестала быть горячей, но дальнейшая её оптимизация невозможна, так как функция уже написана в самой быстрой своей версии. В таком случае, оптимизировать нужно следующую горячую функцию - функцию поиска элемента в хеш-таблице.
 
+<details>
+<summary> Как выглядит функция, которую нужно оптимизировать? </summary>
+
+``` C
+signed long long ASMHashTableFindElemSIMD (hash_table_t hash_table, const char* const element)
+{
+    ASSERT (hash_table != NULL, "Invalid pointer for hash table for HashTableFindElem\n");
+    ASSERT (element    != NULL, "Invalid pointer for element HashTableFindElem\n");
+
+    const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
+
+    const signed long long val_index =
+    ASMListFindElemSIMD (&hash_table [bucket_index], element);
+
+    if (val_index == kPoisonVal)
+    {
+        return kPoisonVal;
+    }
+
+    return (signed long long) ((hash_elem_t*)(hash_table [bucket_index].data))[val_index].counter;
+}
+```
+
+</details>
+
+В данной функции происходит лишь расчёт хеша элемента, а затем поиск этого элемента в выбранном списке. Однако, можно заметить, что возвращаемое значение этой функции содержит несколько доступов в память, а значит, эту часть функции и нужно улучшить.
+
+Частично функцию можно оптимизировать с помощью **inline assembly**. Им и воспользуемся.
+
+Заметим, что в данном выражении происходит доступ к счётчику количества добавления слов в таблицу. Вспомним, что перед этим мы вызывали функцию поиска слова в списке, написанную на языке ассемблера, то есть мы знаем, как в ней между регистрами будут распределены данные. В таком случае запишем на выходе из функции поиска элемента в списке её результат - **RAX** - в регистр **RDI**, а в начале ассемблерной вставки вернём его в **RAX**. Сравним значение **RAX** с **-1** (ядовитое значение), и в случае равенства выйдем из функции.
+
+В противном случае вспомним, что в **R9** лежал указатель на элемент, следующий за найденным, то есть счётчик в найденном элементе должен лежать по адресу **R9** - 32, так как структура была увеличена до 32 байт с целью выравнивания данных по 32 с целью работы с **SIMD** интринсиками. Таким образом, положим эту величину в **ret_val** и выйдем из функции.
+
+<details>
+<summary> Реализация функции с помощью <b>asm ()</b> </summary>
+
+``` C
+signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const char* const element)
+{
+    ASSERT (hash_table != NULL, "Invalid pointer for hash table for HashTableFindElem\n");
+    ASSERT (element    != NULL, "Invalid pointer for element HashTableFindElem\n");
+
+    signed long long ret_val = kPoisonVal;
+    const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
+
+    ASMListFindElemSIMD (&hash_table [bucket_index], element);
+
+    asm(
+        "movq %%rdi, %%rax\n\t"                         // Возвращаем значение после выхода из функции поиска элемента в списке
+        "cmpq %1, %%rax\n\t"                            // Сравнение с kPoisonVal
+        "je .SkipASM\n\t"
+
+        "subq $32, %%r9\n\t"
+        "movq (%%r9), %0\n\t"                        // R9 = указатель на counter в hash_elem_t
+
+        ".SkipASM:\n\t"
+        : "=r" (ret_val)
+        : "r" (kPoisonVal)
+        :
+    );
+
+    return ret_val;
+}
+```
+
+</details>
 
 #### Результат профилирования
 
@@ -434,7 +501,7 @@ ASMListFindElemSIMD:
             Стартовая версия
             </td>
             <td align="center">
-            2.97
+            3.016
             </td>
         </tr>
         <tr>
@@ -442,10 +509,22 @@ ASMListFindElemSIMD:
             Предыдущая версия
             </td>
             <td align="center">
-            1.66
+            1.016
             </td>
         </tr>
     </tbody>
 </table>
 
+### Достаточно ли оптимизаций?
+
+Последняя оптимизация принесла прирост в 1 процент относительно предыдущей версии, что означает, что на этом пора заканчивать, так как выгода от последующий оптимизаций не будет стоить потраченного времени.
+
 ## Выводы
+
+В данной работе мы смогли применить три вида оптимизаций программы -
+
+1. Использование **SIMD** интринсиков для работы со строками
+2. Переписывание функции на язык ассемблера с целью оптимального распределения инструкций с учётом времени доступа в память
+3. Использование ассемблерной вставки с учётом распределения данных по регистрам.
+
+Суммарно все эти три оптимизации дали ускорение программы в 3 раза, что довольно много, если масштабировать нашу задачу.

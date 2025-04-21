@@ -17,4 +17,6 @@ signed long long ListFindElemSIMD      (const list_t* const list, const char* co
 
 signed long long ASMHashTableFindElemSIMD (hash_table_t hash_table, char const* const element);
 
+signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, char const* const element);
+
 #endif // HASH_TABLE_FIND_H

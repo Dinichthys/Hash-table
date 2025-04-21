@@ -113,23 +113,40 @@ signed long long ASMHashTableFindElemSIMD (hash_table_t hash_table, const char* 
 
     const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
 
+    const signed long long val_index =
     ASMListFindElemSIMD (&hash_table [bucket_index], element);
 
-    asm(//".intel_syntax noprefix\n\t"
+    if (val_index == kPoisonVal)
+    {
+        return kPoisonVal;
+    }
+
+    return (signed long long) ((hash_elem_t*)(hash_table [bucket_index].data))[val_index].counter;
+}
+
+signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const char* const element)
+{
+    ASSERT (hash_table != NULL, "Invalid pointer for hash table for HashTableFindElem\n");
+    ASSERT (element    != NULL, "Invalid pointer for element HashTableFindElem\n");
+
+    signed long long ret_val = kPoisonVal;
+    const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
+
+    ASMListFindElemSIMD (&hash_table [bucket_index], element);
+
+    asm(
         "movq %%rdi, %%rax\n\t"
-        "cmpq $0xFFFFFFFFFFFFFFFF, %%rax\n\t"
+        "cmpq %1, %%rax\n\t"
         "je .SkipASM\n\t"
 
-        "movq $32, %%r8\n\t"
-        "movq (%%r9,%%r8,1), %%rax\n\t"
+        "subq $32, %%r9\n\t"
+        "movq (%%r9), %0\n\t"
 
         ".SkipASM:\n\t"
-        "addq $8, %%rsp\n\t"
-        "pop %%rbx\n\t"
-        "pop %%rbp\n\t"
-        "ret\n\t"
-        :
+        : "=r" (ret_val)
         : "r" (kPoisonVal)
         :
     );
+
+    return ret_val;
 }
