@@ -13,3 +13,7 @@ Bucket_size.txt
 First_callgrind.*
 
 perf.*
+
+test.sh
+
+results*

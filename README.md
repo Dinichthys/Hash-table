@@ -220,7 +220,7 @@ signed long long ListFindElemSIMD (const list_t* const list, const char* const e
 <table>
     <thead>
         <tr>
-            <th align="center">Относительно чего измеряется прирост производительности</th>
+            <th align="center">Версия, относительно которой измеряется прирост производительности</th>
             <th align="center">Во сколько раз ускорилась программа</th>
         </tr>
     </thead>
@@ -230,7 +230,7 @@ signed long long ListFindElemSIMD (const list_t* const list, const char* const e
             Стартовая версия
             </td>
             <td align="center">
-            1.79
+            1.792 ± 0.003
             </td>
         </tr>
     </tbody>
@@ -368,7 +368,7 @@ ASMListFindElemSIMD:
 <table>
     <thead>
         <tr>
-            <th align="center">Относительно чего измеряется прирост производительности</th>
+            <th align="center">Версия, относительно которой измеряется прирост производительности</th>
             <th align="center">Во сколько раз ускорилась программа</th>
         </tr>
     </thead>
@@ -378,7 +378,7 @@ ASMListFindElemSIMD:
             Стартовая версия
             </td>
             <td align="center">
-            2.97
+            2.95 ± 0.04
             </td>
         </tr>
         <tr>
@@ -386,7 +386,7 @@ ASMListFindElemSIMD:
             Предыдущая версия
             </td>
             <td align="center">
-            1.66
+            1.65 ± 0.02
             </td>
         </tr>
     </tbody>
@@ -491,7 +491,7 @@ signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const 
 <table>
     <thead>
         <tr>
-            <th align="center">Относительно чего измеряется прирост производительности</th>
+            <th align="center">Версия, относительно которой измеряется прирост производительности</th>
             <th align="center">Во сколько раз ускорилась программа</th>
         </tr>
     </thead>
@@ -501,7 +501,7 @@ signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const 
             Стартовая версия
             </td>
             <td align="center">
-            3.016
+            2.97 ± 0.02
             </td>
         </tr>
         <tr>
@@ -509,7 +509,7 @@ signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const 
             Предыдущая версия
             </td>
             <td align="center">
-            1.016
+            1.004 ± 0.02
             </td>
         </tr>
     </tbody>
@@ -518,6 +518,84 @@ signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const 
 ### Достаточно ли оптимизаций?
 
 Последняя оптимизация принесла прирост в 1 процент относительно предыдущей версии, что означает, что на этом пора заканчивать, так как выгода от последующий оптимизаций не будет стоить потраченного времени.
+
+## Обсуждение результатов
+
+<table>
+    <thead>
+        <tr>
+            <th align="center">Версия программы</th>
+            <th align="center">Количество тактов, которое отработала программа, *10<sup>10</sup></th>
+            <th align="center">Ускорение программы по сравнению с начальной версией</th>
+            <th align="center">Ускорение программы по сравнению с предыдущей версией</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td align="center">
+            Стартовая версия
+            </td>
+            <td align="center">
+            9.65 ± 0.01
+            </td>
+            <td align="center">
+            1
+            </td>
+            <td align="center">
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+            Версия с SIMD
+            </td>
+            <td align="center">
+            5.386 ± 0.004
+            </td>
+            <td align="center">
+            1.792 ± 0.003
+            </td>
+            <td align="center">
+            1.792 ± 0.003
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+            Версия с переписанной на ассемблер функцией
+            </td>
+            <td align="center">
+            3.27 ± 0.05
+            </td>
+            <td align="center">
+            2.95 ± 0.04
+            </td>
+            <td align="center">
+            1.65 ± 0.02
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+            Версия с ассемблерной вставкой
+            </td>
+            <td align="center">
+            3.25 ± 0.03
+            </td>
+            <td align="center">
+            2.97 ± 0.02
+            </td>
+            <td align="center">
+            1.004 ± 0.002
+            </td>
+        </tr>
+        <tr>
+            <td align="center">
+            Все версии на одной диаграмме
+            </td>
+            <td align="center"  colspan = 3>
+            <img src="data/result.png" alt="Фото">
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 ## Выводы
 
@@ -533,6 +611,6 @@ signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const 
 
 Рассчитаем **КПД** наших оптимизаций (*КПД = Коэффициент оптимизации / Количество ассемблерных строк кода*)
 
-$КПД = \frac {3.016} {78} \cdot 1000 = 38.67$
+$КПД = \frac {2.97} {78} \cdot 1000 = 38.1 ± 0.3$
 
-Таким образом, **КПД** получилось равным 38.67.
+Таким образом, **КПД** получилось равным 38.1 ± 0.3.
