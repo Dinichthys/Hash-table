@@ -103,7 +103,7 @@ sudo hotspot
     <tbody>
         <tr>
             <td align="center">
-            <img src="data/Perf1.png" alt="Фото">
+            <img src="data/Perf1_highlighted.png" alt="Фото">
             </td>
             <td align="center">
             <img src="data/FlameGraph1.png" alt="Фото">
@@ -206,7 +206,7 @@ signed long long ListFindElemSIMD (const list_t* const list, const char* const e
     <tbody>
         <tr>
             <td align="center">
-            <img src="data/Perf2.png" alt="Фото">
+            <img src="data/Perf2_highlighted.png" alt="Фото">
             </td>
             <td align="center">
             <img src="data/FlameGraph2.png" alt="Фото">
@@ -354,7 +354,7 @@ ASMListFindElemSIMD:
     <tbody>
         <tr>
             <td align="center">
-            <img src="data/Perf3.png" alt="Фото">
+            <img src="data/Perf3_highlighted.png" alt="Фото">
             </td>
             <td align="center">
             <img src="data/FlameGraph3.png" alt="Фото">

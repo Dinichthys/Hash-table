@@ -55,13 +55,13 @@ int main()
     //     cock_num       += HashTableFindElemSIMD (hash_table, "cock");
     // }
 
-    // for (size_t iteration = 0; iteration < kNumIteration; iteration++)
-    // {
-    //     the_num        += ASMHashTableFindElemSIMD (hash_table, "the");
-    //     Philosophy_num += ASMHashTableFindElemSIMD (hash_table, "Philosophy");
-    //     dragon_num     += ASMHashTableFindElemSIMD (hash_table, "dragon");
-    //     cock_num       += ASMHashTableFindElemSIMD (hash_table, "cock");
-    // }
+    for (size_t iteration = 0; iteration < kNumIteration; iteration++)
+    {
+        the_num        += ASMHashTableFindElemSIMD (hash_table, "the");
+        Philosophy_num += ASMHashTableFindElemSIMD (hash_table, "Philosophy");
+        dragon_num     += ASMHashTableFindElemSIMD (hash_table, "dragon");
+        cock_num       += ASMHashTableFindElemSIMD (hash_table, "cock");
+    }
 
     // for (size_t iteration = 0; iteration < kNumIteration; iteration++)
     // {
