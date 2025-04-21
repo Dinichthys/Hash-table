@@ -39,6 +39,7 @@ typedef bucket_t hash_table_t [kNumBucket];
 #include "HashTable/hash_table_construction.h"
 #include "HashTable/hash_table_find.h"
 #include "HashTable/hash_table_push.h"
+#include "HashTable/hash_table_pop.h"
 #include "HashTable/hash_table_verify.h"
 #include "HashTable/hash.h"
 

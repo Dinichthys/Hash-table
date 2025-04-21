@@ -13,6 +13,7 @@ add_executable (${PROJECT_NAME}
     src/HashTable/hash_table_verify.cpp
     src/HashTable/hash_table_find.cpp
     src/HashTable/hash_table_push.cpp
+    src/HashTable/hash_table_pop.cpp
 
     src/DataBase/read_data_base.cpp
 

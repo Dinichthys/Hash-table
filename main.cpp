@@ -39,13 +39,13 @@ int main()
     signed long long dragon_num = 0;
     signed long long cock_num = 0;
 
-    for (size_t iteration = 0; iteration < kNumIteration; iteration++)
-    {
-        the_num        += HashTableFindElem (hash_table, "the");
-        Philosophy_num += HashTableFindElem (hash_table, "Philosophy");
-        dragon_num     += HashTableFindElem (hash_table, "dragon");
-        cock_num       += HashTableFindElem (hash_table, "cock");
-    }
+    // for (size_t iteration = 0; iteration < kNumIteration; iteration++)
+    // {
+    //     the_num        += HashTableFindElem (hash_table, "the");
+    //     Philosophy_num += HashTableFindElem (hash_table, "Philosophy");
+    //     dragon_num     += HashTableFindElem (hash_table, "dragon");
+    //     cock_num       += HashTableFindElem (hash_table, "cock");
+    // }
 
     // for (size_t iteration = 0; iteration < kNumIteration; iteration++)
     // {
@@ -94,6 +94,16 @@ int main()
 //                      HashTableFindElem (hash_table, "slovo"),
 //                      HashTableFindElem (hash_table, "seno"),
 //                      HashTableFindElem (hash_table, "den"));
+//
+//     HashTablePopElem (hash_table, "den");
+//
+//     fprintf (stdout, "slovo: %lld \n"
+//                      "seno:  %lld \n"
+//                      "den:   %lld \n",
+//                      HashTableFindElem (hash_table, "slovo"),
+//                      HashTableFindElem (hash_table, "seno"),
+//                      HashTableFindElem (hash_table, "den"));
+
 //
 //     FILE* bucket_size = fopen ("Bucket_size.txt", "w");
 //
