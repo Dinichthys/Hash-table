@@ -7,6 +7,6 @@
 
 #include "List/include/list.h"
 
-extern "C" signed long long ASMListFindElemSIMD (const list_t* const list, const char* const element);
+extern "C" int64_t ASMListFindElemSIMD (const list_t* const list, const char* const element);
 
 #endif // ASM_LIST_FIND_ELEM_SIMD_H

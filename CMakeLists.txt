@@ -15,6 +15,8 @@ add_executable (${PROJECT_NAME}
     src/HashTable/hash_table_push.cpp
     src/HashTable/hash_table_pop.cpp
 
+    src/HashTable/strcmp.cpp
+
     src/DataBase/read_data_base.cpp
 
     libs/MyLib/Logger/logging.cpp

@@ -104,7 +104,7 @@ ASMListFindElemSIMD:
 
 ; What does this function do:
 ;
-; signed long long ListFindElemSIMD (const list_t* const list, const char* const element)
+; int64_t ListFindElemSIMD (const list_t* const list, const char* const element)
 ; {
 ;     ASSERT (list    != NULL, "Invalid pointer for list for ListFindElem\n");
 ;     ASSERT (element != NULL, "Invalid pointer for element ListFindElem\n");
@@ -127,7 +127,7 @@ ASMListFindElemSIMD:
 ;         if (_mm256_movemask_epi8 (_mm256_cmpeq_epi32 (element_SIMD, cmp_elem)) == 0xFF'FF'FF'FF)
 ;         {
 ;             LOG (kDebug, "Found \"%s\"\n", element);
-;             return (signed long long) list_elem_index;
+;             return (int64_t) list_elem_index;
 ;         }
 ;         list_elem_index = list->order[list_elem_index].next;
 ;     }

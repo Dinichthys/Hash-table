@@ -34,10 +34,10 @@ int main()
     fclose (data_base);
     const size_t kNumIteration = 100'000'000;
 
-    signed long long the_num = 0;
-    signed long long Philosophy_num = 0;
-    signed long long dragon_num = 0;
-    signed long long cock_num = 0;
+    int64_t the_num = 0;
+    int64_t Philosophy_num = 0;
+    int64_t dragon_num = 0;
+    int64_t cock_num = 0;
 
     // for (size_t iteration = 0; iteration < kNumIteration; iteration++)
     // {
@@ -55,13 +55,13 @@ int main()
     //     cock_num       += HashTableFindElemSIMD (hash_table, "cock");
     // }
 
-    for (size_t iteration = 0; iteration < kNumIteration; iteration++)
-    {
-        the_num        += ASMHashTableFindElemSIMD (hash_table, "the");
-        Philosophy_num += ASMHashTableFindElemSIMD (hash_table, "Philosophy");
-        dragon_num     += ASMHashTableFindElemSIMD (hash_table, "dragon");
-        cock_num       += ASMHashTableFindElemSIMD (hash_table, "cock");
-    }
+    // for (size_t iteration = 0; iteration < kNumIteration; iteration++)
+    // {
+    //     the_num        += ASMHashTableFindElemSIMD (hash_table, "the");
+    //     Philosophy_num += ASMHashTableFindElemSIMD (hash_table, "Philosophy");
+    //     dragon_num     += ASMHashTableFindElemSIMD (hash_table, "dragon");
+    //     cock_num       += ASMHashTableFindElemSIMD (hash_table, "cock");
+    // }
 
     // for (size_t iteration = 0; iteration < kNumIteration; iteration++)
     // {
@@ -71,11 +71,19 @@ int main()
     //     cock_num       += InlineASMHashTableFindElemSIMD (hash_table, "cock");
     // }
 
+    for (size_t iteration = 0; iteration < kNumIteration; iteration++)
+    {
+        the_num        += HashTableFindElemStrCmp (hash_table, "the");
+        Philosophy_num += HashTableFindElemStrCmp (hash_table, "Philosophy");
+        dragon_num     += HashTableFindElemStrCmp (hash_table, "dragon");
+        cock_num       += HashTableFindElemStrCmp (hash_table, "cock");
+    }
+
     fprintf (stdout, "Iteration number = %lu\n"
-                        "the:         %lld \n"
-                        "Philosophy:  %lld \n"
-                        "dragon:      %lld \n"
-                        "cock:        %lld \n",
+                        "the:         %ld \n"
+                        "Philosophy:  %ld \n"
+                        "dragon:      %ld \n"
+                        "cock:        %ld \n",
                         kNumIteration,
                         the_num, Philosophy_num, dragon_num, cock_num);
 

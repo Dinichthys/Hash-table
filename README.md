@@ -118,64 +118,28 @@ sudo hotspot
 
 В профиле первой программы можно увидеть, что самая горячая функция - `strcmp`.
 
-Данный результат приводит нас к выводу о том, что нужно оптимизировать работу со строками. Сравнение строк можно сделать с помощью **SIMD** инструкций. Для этого их нужно будет загружать в широкие регистры, но их длина ограничена, поэтому для данной оптимизации ограничим длину допустимых слов. Будем считать, что количество слов длины большей **32** пренебрежимо мало. Тогда заменим работу со строками на **SIMD** интринсики.
-
-#### Использование данной оптимизации на примере функции поиска элемента в списке:
+Данный результат приводит нас к выводу о том, что нужно оптимизировать работу со строками. Сравнение строк можно сделать с помощью **SIMD** инструкций. Для этого их нужно будет загружать в широкие регистры, но их длина ограничена, поэтому для данной оптимизации ограничим длину допустимых слов. Будем считать, что количество слов длины большей **32** пренебрежимо мало. Тогда заменим работу со строками на **SIMD** интринсики. Также, будем считать, что аргументы функции выравнены по **32**.
 
 <details>
-<summary> Реализация функции до оптимизации на языке C </summary>
+<summary> Реализация функции на языке C </summary>
 
 ``` C
-signed long long ListFindElem (const list_t* const list, const char* const element)
+int strcmp_256 (const char* const first_str, const char* const second_str)
 {
-    size_t list_elem_index = list->order[0].next;
+    ASSERT (first_str != NULL, "First string is null pointer in function strcmp\n");
+    ASSERT (second_str != NULL, "Second string is null pointer in function strcmp\n");
 
-    hash_elem_t* hash_elem_arr = (hash_elem_t*)(list->data);
+    __m256i first_m256  = _mm256_load_si256 ((__m256i*) first_str);
+    __m256i second_m256 = _mm256_load_si256 ((__m256i*) second_str);
 
-    while (list_elem_index != 0)
+    if (_mm256_movemask_epi8 (_mm256_cmpeq_epi32 (first_m256, second_m256)) == 0xFF'FF'FF'FF)
     {
-        if (strcmp (hash_elem_arr[list_elem_index].string, element) == 0)
-        {
-            return (signed long long) list_elem_index;
-        }
-        list_elem_index = list->order[list_elem_index].next;
+        return 0;
     }
 
-    return kPoisonVal;
+    return kNEqual;
 }
 ```
-</details>
-
-<details>
-<summary> Реализация функции с использованием <b>SIMD</b> на языке C </summary>
-
-``` C
-signed long long ListFindElemSIMD (const list_t* const list, const char* const element)
-{
-    char element_str [kMaxWordLen] = "";
-    strcpy (element_str, element);
-
-    __m256i element_SIMD = _mm256_load_si256 ((const __m256i*) element_str);
-
-    size_t list_elem_index = list->order[0].next;
-
-    hash_elem_t* hash_elem_arr = (hash_elem_t*)(list->data);
-
-    __m256i cmp_elem = _mm256_setzero_si256 ();
-    while (list_elem_index != 0)
-    {
-        cmp_elem = _mm256_load_si256 ((const __m256i*) hash_elem_arr[list_elem_index].string);
-        if (_mm256_movemask_epi8 (_mm256_cmpeq_epi32 (element_SIMD, cmp_elem)) == 0xFF'FF'FF'FF)
-        {
-            return (signed long long) list_elem_index;
-        }
-        list_elem_index = list->order[list_elem_index].next;
-    }
-
-    return kPoisonVal;
-}
-```
-
 </details>
 
 #### Результат профилирования
@@ -214,7 +178,7 @@ signed long long ListFindElemSIMD (const list_t* const list, const char* const e
             Стартовая версия
             </td>
             <td align="center">
-            1.792 ± 0.003
+            1.306 ± 0.001
             </td>
         </tr>
     </tbody>
@@ -388,7 +352,7 @@ ASMListFindElemSIMD:
             Предыдущая версия
             </td>
             <td align="center">
-            1.65 ± 0.02
+            2.26 ± 0.04
             </td>
         </tr>
     </tbody>
@@ -404,11 +368,11 @@ ASMListFindElemSIMD:
 <summary> Как выглядит функция, которую нужно оптимизировать? </summary>
 
 ``` C
-signed long long ASMHashTableFindElemSIMD (hash_table_t hash_table, const char* const element)
+int64_t ASMHashTableFindElemSIMD (hash_table_t hash_table, const char* const element)
 {
     const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
 
-    const signed long long val_index =
+    const int64_t val_index =
     ASMListFindElemSIMD (&hash_table [bucket_index], element);
 
     if (val_index == kPoisonVal)
@@ -416,7 +380,7 @@ signed long long ASMHashTableFindElemSIMD (hash_table_t hash_table, const char* 
         return kPoisonVal;
     }
 
-    return (signed long long) ((hash_elem_t*)(hash_table [bucket_index].data))[val_index].counter;
+    return (int64_t) ((hash_elem_t*)(hash_table [bucket_index].data))[val_index].counter;
 }
 ```
 
@@ -434,9 +398,9 @@ signed long long ASMHashTableFindElemSIMD (hash_table_t hash_table, const char* 
 <summary> Реализация функции с помощью <b>asm ()</b> </summary>
 
 ``` C
-signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const char* const element)
+int64_t InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const char* const element)
 {
-    signed long long ret_val = kPoisonVal;
+    int64_t ret_val = kPoisonVal;
     const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
 
     ASMListFindElemSIMD (&hash_table [bucket_index], element);
@@ -452,7 +416,7 @@ signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const 
         ".SkipASM:\n\t"
         : "=r" (ret_val)
         : "r" (kPoisonVal)
-        :
+        : "rax", "r9"
     );
 
     return ret_val;
@@ -505,7 +469,7 @@ signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const 
             Предыдущая версия
             </td>
             <td align="center">
-            1.004 ± 0.02
+            1.004 ± 0.002
             </td>
         </tr>
     </tbody>
@@ -545,13 +509,13 @@ signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const 
             Версия с SIMD
             </td>
             <td align="center">
-            5.386 ± 0.004
+            7.39 ± 0.07
             </td>
             <td align="center">
-            1.792 ± 0.003
+            1.31 ± 0.01
             </td>
             <td align="center">
-            1.792 ± 0.003
+            1.31 ± 0.01
             </td>
         </tr>
         <tr>
@@ -565,7 +529,7 @@ signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const 
             2.95 ± 0.04
             </td>
             <td align="center">
-            1.65 ± 0.02
+            2.26 ± 0.04
             </td>
         </tr>
         <tr>

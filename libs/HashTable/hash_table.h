@@ -43,6 +43,8 @@ typedef bucket_t hash_table_t [kNumBucket];
 #include "HashTable/hash_table_verify.h"
 #include "HashTable/hash.h"
 
+#include "HashTable/strcmp.h"
+
 #include "HashTable/asm_list_find_elem_simd.h"
 
 #endif // HASH_TABLE_H

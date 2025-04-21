@@ -17,7 +17,8 @@ delta_prev = [0, 0, 0, 0]
 avg_prev = [0, 0, 0, 0]
 
 file_names = ['data/plot_Base.png',
-              'data/plot_SIMD.png',
+              'data/plot_StrCmp',
+            #   'data/plot_SIMD.png',
               'data/plot_ASM.png',
               'data/plot_InlineASM.png']
 # graph_names = ['Базовая версия',
@@ -66,7 +67,7 @@ plt.savefig(file_names [version_num], dpi = 300)
 plt.clf ()
 
 version_num = 1
-with open('results_SIMD.txt', 'r') as f:
+with open('results_StrCmp.txt', 'r') as f:
    data = [float(line.strip()) for line in f]
 
 for i in range (0, 10):
@@ -161,7 +162,7 @@ plt.bar (['Naive', 'SIMD', 'ASM', 'Inline ASM'], avg)
 plt.title('Ускорение программы в зависимости\n от способа оптимизации в разах\n относительно наивной версии')
 plt.ylabel("Во сколько раз ускорилось")
 
-plt.savefig("data/result.png", dpi = 300)
+plt.savefig("data/result_with_StrCmp.png", dpi = 300)
 
 # with open('Output_4.txt', 'r') as f:
 #    data = [float(float(line.strip())/1.5) for line in f]

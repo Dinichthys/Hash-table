@@ -7,16 +7,19 @@
 
 #include "List/include/list.h"
 
-static const signed long long kPoisonVal = -1;
+static const int64_t kPoisonVal = -1;
 
-signed long long HashTableFindElem (hash_table_t hash_table, char const* const element);
-signed long long ListFindElem      (const list_t* const list, const char* const element);
+int64_t HashTableFindElem (hash_table_t hash_table, char const* const element);
+int64_t ListFindElem      (const list_t* const list, const char* const element);
 
-signed long long HashTableFindElemSIMD (hash_table_t hash_table, char const* const element);
-signed long long ListFindElemSIMD      (const list_t* const list, const char* const element);
+int64_t HashTableFindElemStrCmp (hash_table_t hash_table, char const* const element);
+int64_t ListFindElemStrCmp      (const list_t* const list, const char* const element);
 
-signed long long ASMHashTableFindElemSIMD (hash_table_t hash_table, char const* const element);
+int64_t HashTableFindElemSIMD (hash_table_t hash_table, char const* const element);
+int64_t ListFindElemSIMD      (const list_t* const list, const char* const element);
 
-signed long long InlineASMHashTableFindElemSIMD (hash_table_t hash_table, char const* const element);
+int64_t ASMHashTableFindElemSIMD (hash_table_t hash_table, char const* const element);
+
+int64_t InlineASMHashTableFindElemSIMD (hash_table_t hash_table, char const* const element);
 
 #endif // HASH_TABLE_FIND_H

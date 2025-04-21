@@ -17,7 +17,7 @@ enum HashTableError HashTablePushElem (hash_table_t hash_table, const char* cons
 
     const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
 
-    const signed long long val_index =
+    const int64_t val_index =
     ListFindElem (&hash_table [bucket_index], element);
 
     if (val_index != kPoisonVal)
@@ -53,7 +53,7 @@ enum HashTableError HashTablePushElemSIMD (hash_table_t hash_table, char* const 
 
     const size_t bucket_index = _mm256_movemask_epi8 (element_SIMD) % kNumBucket;
 
-    const signed long long val_index =
+    const int64_t val_index =
     ListFindElemSIMD (&hash_table [bucket_index], element);
 
     if (val_index != kPoisonVal)
