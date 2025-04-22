@@ -592,4 +592,4 @@ int64_t InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const char* con
 
 $КПД = \frac {2.97} {84} \cdot 1000 = 35.4 ± 0.2$
 
-Таким образом, **КПД** получилось равным 35.4 ± 0.3.
+Таким образом, **КПД** получилось равным 35.4 ± 0.2.
