@@ -46,7 +46,8 @@ target_include_directories (${PROJECT_NAME}
         libs/MyLib/Logger
         libs/MyLib/Assert
         libs/List/include
-        lins/HashTable
+        libs/HashTable
+        libs/DataBase
 )
 
 target_compile_features (${PROJECT_NAME}
