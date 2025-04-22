@@ -83,10 +83,9 @@ int main()
                         "the:         %ld \n"
                         "Philosophy:  %ld \n"
                         "dragon:      %ld \n"
-                        "cock:        %ld \n"
-                        "%ld\n",
+                        "cock:        %ld \n",
                         kNumIteration,
-                        the_num, Philosophy_num, dragon_num, cock_num, -100'000'000L);
+                        the_num, Philosophy_num, dragon_num, cock_num);
 
 //     HashTablePushElem (hash_table, "slovo");
 //     HashTablePushElem (hash_table, "slovo");

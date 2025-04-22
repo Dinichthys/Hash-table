@@ -392,7 +392,7 @@ int64_t ASMHashTableFindElemSIMD (hash_table_t hash_table, const char* const ele
 
 Заметим, что в данном выражении происходит доступ к счётчику количества добавления слов в таблицу. Вспомним, что перед этим мы вызывали функцию поиска слова в списке, написанную на языке ассемблера, то есть мы знаем, как в ней между регистрами будут распределены данные. В таком случае запишем на выходе из функции поиска элемента в списке её результат - **RAX** - в регистр **RDI**, а в начале ассемблерной вставки вернём его в **RAX**. Сравним значение **RAX** с **-1** (ядовитое значение), и в случае равенства выйдем из функции.
 
-В противном случае вспомним, что в **R9** лежал указатель на элемент, следующий за найденным, то есть счётчик в найденном элементе должен лежать по адресу **R9** - 32, так как структура была увеличена до 32 байт с целью выравнивания данных по 32 с целью работы с **SIMD** интринсиками. Таким образом, положим эту величину в **ret_val** и выйдем из функции.
+В противном случае вспомним, что в **R9** лежал указатель на элемент, следующий за найденным, то есть счётчик в найденном элементе должен лежать по адресу **R9** - 32, так как структура была увеличена до 32 байт с целью выравнивания данных по 32 с целью работы с **AVX** инструкциями. Таким образом, положим эту величину в **ret_val** и выйдем из функции.
 
 <details>
 <summary> Реализация функции с помощью <b>asm ()</b> </summary>
@@ -404,24 +404,21 @@ int64_t InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const char* con
     const size_t bucket_index = Hashing (element, strlen (element)) % kNumBucket;
 
     asm(
-        ".BreakPoint:\n\t"
-        "movq %2, %%rdi\n\t"
-        "movq %3, %%rsi\n\t"
+        "movq %1, %%rdi\n\t"
+        "movq %2, %%rsi\n\t"
         "call ASMListFindElemSIMD\n\t"
+        "subq $32, %%r9\n\t"
         "movq %%rdi, %%rax\n\t"
-        "cmpq %1, %%rax\n\t"
+        "cmpq $-1, %%rax\n\t"
+        "movq (%%r9), %0\n\t"
         "je .SkipASM\n\t"
 
-        "subq $32, %%r9\n\t"
-        "movq (%%r9), %0\n\t"
         "jmp .EndASM\n\t"
-
         ".SkipASM:\n\t"
-        "movq %1, %0\n\t"
-
+        "movq $-1, %0\n\t"
         ".EndASM:\n\t"
         : "=r" (ret_val)
-        : "m" (kPoisonVal), "r" (&hash_table [bucket_index]), "r" (element)
+        : "r" (&hash_table [bucket_index]), "r" (element)
         : "rax", "rdi", "rsi", "rdx", "rcx", "r9", "r8"
     );
 
@@ -557,7 +554,7 @@ int64_t InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const char* con
             Все версии на одной диаграмме
             </td>
             <td align="center"  colspan = 3>
-            <img src="data/result.png" alt="Фото">
+            <img src="data/result_with_StrCmp.png" alt="Фото">
             </td>
         </tr>
     </tbody>
@@ -577,6 +574,6 @@ int64_t InlineASMHashTableFindElemSIMD (hash_table_t hash_table, const char* con
 
 Рассчитаем **КПД** наших оптимизаций (*КПД = Коэффициент оптимизации / Количество ассемблерных строк кода*)
 
-$КПД = \frac {2.97} {78} \cdot 1000 = 38.1 ± 0.3$
+$КПД = \frac {2.97} {84} \cdot 1000 = 35.4 ± 0.2$
 
-Таким образом, **КПД** получилось равным 38.1 ± 0.3.
+Таким образом, **КПД** получилось равным 35.4 ± 0.3.
